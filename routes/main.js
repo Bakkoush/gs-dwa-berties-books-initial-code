@@ -26,23 +26,27 @@ router.get('/books/list', (req, res, next) => {
 
 // ✅ Show add book form
 router.get('/books/addbook', (req, res) => {
-    res.render('addbook.ejs');
+    // Always provide a default message (so EJS doesn't throw an error)
+    res.render('addbook.ejs', { message: null });
 });
 
 // ✅ Handle form submission (add book)
 router.post('/books/bookadded', (req, res, next) => {
     const sqlquery = "INSERT INTO books (name, price) VALUES (?, ?)";
-    const newrecord = [req.body.bookname, req.body.price];
+    const name = req.body.bookname;
+    const price = req.body.price;
 
-    db.query(sqlquery, newrecord, (err, result) => {
+    db.query(sqlquery, [name, price], (err, result) => {
         if (err) {
             next(err);
         } else {
-            // Redirect back to list after adding
-            res.redirect('/books/list');
+            const message = `This book is added to database, name: ${name} price ${price}`;
+            // Stay on the addbook page, show confirmation
+            res.render('addbook.ejs', { message });
         }
     });
 });
+
 
 // Export the router object
 module.exports = router;

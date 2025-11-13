@@ -24,7 +24,7 @@ router.get('/search-result', function (req, res, next) {
 
     // addbooks route
 router.get('/addbook', function(req, res, next) {
-    res.render('addbook', { message: null }); // render with empty message
+    res.render('addbook', { message: null }); // render with a default value
 });
 
 
