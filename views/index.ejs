@@ -1,15 +1,23 @@
- <!doctype html>
+<!doctype html>
 <html>
   <head>
     <title>Welcome to <%=shopData.shopName%></title>
-    <link rel="stylesheet"  type="text/css" href="/main.css" />
+    <link rel="stylesheet" type="text/css" href="/main.css" />
   </head>
   <body>
     <h1>Welcome to <%=shopData.shopName%></h1>
+
     <p><a href="about">About <%=shopData.shopName%></a></p>
+
+    <!-- BOOK LINKS -->
     <p><a href="books/search">Search for books</a></p>
-    <p><a href="users/register">Register with us</a></p>
     <p><a href="books/addbook">Add books</a></p>
     <p><a href="books/list">List of our books</a></p>
+
+    <!-- USER LINKS -->
+    <p><a href="users/register">Register with us</a></p>
+    <p><a href="users/login">Login</a></p>
+    <p><a href="users/listusers">List Users</a></p>
+
   </body>
 </html>

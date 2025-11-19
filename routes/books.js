@@ -1,54 +1,51 @@
 // Create a new router
 const express = require("express")
 const router = express.Router()
+const bcrypt = require("bcrypt");
 
-router.get('/search',function(req, res, next){
-    res.render("search.ejs")
+// ------------------------------
+// BOOK ROUTES
+// ------------------------------
+
+router.get('/search', function(req, res, next){
+    res.render("search.ejs");
 });
 
 router.get('/search-result', function (req, res, next) {
-    //searching in the database
-    res.send("You searched for: " + req.query.keyword)
+    res.send("You searched for: " + req.query.keyword);
 });
 
-    router.get('/list', function(req, res, next) {
-        let sqlquery = "SELECT * FROM books"; // query database to get all the books
-        // execute sql query
-        db.query(sqlquery, (err, result) => {
-            if (err) {
-                next(err)
-            }
-            res.render("list.ejs", {availableBooks:result})
-         });
+router.get('/list', function(req, res, next) {
+    let sqlquery = "SELECT * FROM books";
+    db.query(sqlquery, (err, result) => {
+        if (err) next(err);
+        res.render("list.ejs", { availableBooks: result });
     });
-
-    // addbooks route
-router.get('/addbook', function(req, res, next) {
-    res.render('addbook', { message: null }); // render with a default value
 });
 
+// Add book form
+router.get('/addbook', function(req, res, next) {
+    res.render('addbook', { message: null });
+});
 
-// POST route for adding a book
+// Handle adding book
 router.post('/bookadded', (req, res, next) => {
     const name = req.body.bookname;
     const price = req.body.price;
 
     const sqlquery = "INSERT INTO books (name, price) VALUES (?, ?)";
     db.query(sqlquery, [name, price], (err, result) => {
-        if (err) {
-            next(err);
-        } else {
+        if (err) next(err);
+        else {
             const message = `This book is added to database, name: ${name} price ${price}`;
-            // Re-render the addbook page with a success message
             res.render('addbook', { message });
         }
     });
 });
 
-
-    // search_result route
+// Search exact match
 router.get('/search_result', function (req, res, next) {
-    const keyword = req.query.search_text; // matches the form input name
+    const keyword = req.query.search_text;
 
     if (!keyword) {
         return res.render("search_result.ejs", { searchTerm: "", results: [] });
@@ -58,9 +55,8 @@ router.get('/search_result', function (req, res, next) {
     const searchValue = "%" + keyword + "%";
 
     db.query(sqlquery, [searchValue], (err, result) => {
-        if (err) {
-            next(err);
-        } else {
+        if (err) next(err);
+        else {
             res.render("search_result.ejs", {
                 searchTerm: keyword,
                 results: result
@@ -70,5 +66,24 @@ router.get('/search_result', function (req, res, next) {
 });
 
 
-// Export the router object so index.js can access it
-module.exports = router
+// ------------------------------
+// USER ROUTES (added as requested)
+// ------------------------------
+
+// Login page
+router.get('/users/login', (req, res) => {
+    res.render('login.ejs', { message: null });
+});
+
+// List all users (no passwords)
+router.get('/users/listusers', (req, res, next) => {
+    const sqlquery = "SELECT username, firstName, lastName, email FROM users";
+
+    db.query(sqlquery, (err, result) => {
+        if (err) next(err);
+        else res.render('listusers.ejs', { users: result });
+    });
+});
+
+// Export router
+module.exports = router;
