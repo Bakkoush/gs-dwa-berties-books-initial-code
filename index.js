@@ -2,6 +2,7 @@
 var express = require('express')
 var ejs = require('ejs')
 var mysql = require('mysql2');
+var session = require ('express-session')
 const path = require('path')
 
 // 🔹 Load environment variables
@@ -16,6 +17,16 @@ app.set('view engine', 'ejs')
 
 // Set up the body parser 
 app.use(express.urlencoded({ extended: true }))
+
+// Create a session
+app.use(session({
+    secret: 'somerandomstuff',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        expires: 600000
+    }
+}))
 
 // Set up public folder (for css and static js)
 app.use(express.static(path.join(__dirname, 'public')))

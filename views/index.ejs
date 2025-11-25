@@ -7,20 +7,31 @@
   <body>
     <h1>Welcome to <%=shopData.shopName%></h1>
 
-    <p><a href="about">About <%=shopData.shopName%></a></p>
+    <p><a href="/about">About <%=shopData.shopName%></a></p>
 
     <!-- BOOK LINKS -->
-    <p><a href="books/search">Search for books</a></p>
-    <p><a href="books/addbook">Add books</a></p>
-    <p><a href="books/list">List of our books</a></p>
+    <p><a href="/books/search">Search for books</a></p>
+
+    <% if (session && session.userId) { %>
+        <!-- Only visible when logged in -->
+        <p><a href="/books/addbook">Add books</a></p>
+        <p><a href="/books/list">List of our books</a></p>
+    <% } else { %>
+        <!-- When logged out, clicking these should send user to login -->
+        <p><a href="/users/login">(Login required) Add books</a></p>
+        <p><a href="/users/login">(Login required) List of our books</a></p>
+    <% } %>
 
     <!-- USER LINKS -->
-    <p><a href="users/register">Register with us</a></p>
-    <p><a href="users/login">Login</a></p>
-    <p><a href="users/listusers">List Users</a></p>
-
-    <!-- NEW: AUDIT LOG LINK -->
-    <p><a href="users/audit">View Audit Log</a></p>
+    <% if (session && session.userId) { %>
+        <p><strong>Logged in as <%= session.userId %></strong></p>
+        <p><a href="/logout">Logout</a></p>
+        <p><a href="/users/listusers">List Users</a></p>
+        <p><a href="/users/audit">View Audit Log</a></p>
+    <% } else { %>
+        <p><a href="/users/register">Register with us</a></p>
+        <p><a href="/users/login">Login</a></p>
+    <% } %>
 
   </body>
 </html>

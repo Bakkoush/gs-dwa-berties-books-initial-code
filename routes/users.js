@@ -4,6 +4,15 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
+// 🔹 Session redirect middleware (added as required)
+const redirectLogin = (req, res, next) => {
+    if (!req.session.userId) {
+        res.redirect('./login');  // User NOT logged in → redirect
+    } else {
+        next();                   // User logged in → continue
+    }
+};
+
 // --- REGISTRATION PAGE ---
 router.get('/register', function (req, res, next) {
     res.render('register.ejs');
@@ -49,8 +58,8 @@ router.post('/registered', function (req, res, next) {
 });
 
 
-// --- LIST USERS (NO PASSWORDS SHOWN) ---
-router.get('/listusers', function (req, res, next) {
+// --- LIST USERS (PROTECTED BY LOGIN) ---
+router.get('/listusers', redirectLogin, function (req, res, next) {
 
     const sqlquery = "SELECT username, firstName, lastName, email FROM users";
 
@@ -99,10 +108,11 @@ router.post('/loggedin', function (req, res, next) {
                 // 🔹 AUDIT SUCCESSFUL LOGIN
                 db.query("INSERT INTO audit_log (username, status) VALUES (?, 'SUCCESS')", [username]);
 
-                res.send(`
-                    <h1>Login Successful</h1>
-                    <p>Welcome back, ${result[0].firstName}!</p>
-                `);
+                // 🔹 SAVE SESSION HERE — required step!
+                req.session.userId = username;
+
+                // Redirect to protected area
+                res.redirect('/users/listusers');
 
             } else {
 
@@ -116,20 +126,8 @@ router.post('/loggedin', function (req, res, next) {
 });
 
 
-// --- AUDIT LOG PAGE ---
-router.get('/audit', function (req, res, next) {
-
-    const sqlquery = "SELECT * FROM audit_log ORDER BY timestamp DESC";
-
-    db.query(sqlquery, (err, result) => {
-        if (err) return next(err);
-
-        res.render("audit.ejs", { logs: result });
-    });
-});
-
-// --- AUDIT LOG PAGE ---
-router.get('/audit', function (req, res, next) {
+// --- AUDIT LOG PAGE (OPTIONALLY PROTECTED TOO) ---
+router.get('/audit', redirectLogin, function (req, res, next) {
 
     const sqlquery = "SELECT * FROM audit_log ORDER BY timestamp DESC";
 
