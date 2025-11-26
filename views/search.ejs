@@ -3,16 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <title>Search Bertie’s Books</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    h1 {
+      color: teal;
+    }
+  </style>
 </head>
 <body>
-
   <h1>Search Bertie’s Books</h1>
 
   <form action="/books/search_result" method="GET">
-    <p>What book do you want?</p>
-    <input id="search-box" type="text" name="search_text">
-    <input type="submit" value="Search">
-  </form>
+  <p>What book do you want?</p>
+  <input id="search-box" type="text" name="search_text">
+  <input type="submit" value="Search">
+</form>
 
 </body>
 </html>
