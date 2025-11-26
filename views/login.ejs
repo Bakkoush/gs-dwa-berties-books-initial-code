@@ -2,6 +2,9 @@
 <html>
 <head>
     <title>User Login</title>
+
+    <!-- Correct CSS path -->
+    <link rel="stylesheet" type="text/css" href="/usr/387/public/main.css" />
 </head>
 <body>
 
@@ -11,7 +14,8 @@
     <p style="color:red;"><%= message %></p>
 <% } %>
 
-<form action="/users/loggedin" method="POST">
+<!-- Corrected form action -->
+<form action="/usr/387/users/loggedin" method="POST">
     <label>Username:</label>
     <input type="text" name="username" required><br><br>
 
@@ -20,6 +24,8 @@
 
     <button type="submit">Login</button>
 </form>
+
+<p><a href="/usr/387/">Return to Home</a></p>
 
 </body>
 </html>

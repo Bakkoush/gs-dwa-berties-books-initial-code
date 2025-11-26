@@ -4,13 +4,12 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
-// 🔹 Session redirect middleware (added as required)
+// 🔹 Session redirect middleware (corrected for /usr/387 prefix)
 const redirectLogin = (req, res, next) => {
     if (!req.session.userId) {
-        res.redirect('./login');  // User NOT logged in → redirect
-    } else {
-        next();                   // User logged in → continue
+        return res.redirect('/usr/387/users/login');  // User NOT logged in → redirect
     }
+    next();  // User logged in → continue
 };
 
 // --- REGISTRATION PAGE ---
@@ -33,7 +32,6 @@ router.post('/registered', function (req, res, next) {
             return res.send("Error hashing password.");
         }
 
-        // Save user in database
         let sqlquery = `
             INSERT INTO users (username, firstName, lastName, email, hashedPassword)
             VALUES (?, ?, ?, ?, ?)
@@ -91,7 +89,6 @@ router.post('/loggedin', function (req, res, next) {
         // Username not found
         if (result.length === 0) {
 
-            // 🔹 AUDIT FAILED LOGIN
             db.query("INSERT INTO audit_log (username, status) VALUES (?, 'FAIL')", [username]);
 
             return res.render("login.ejs", { message: "Login failed: Username not found." });
@@ -105,18 +102,16 @@ router.post('/loggedin', function (req, res, next) {
 
             if (match === true) {
 
-                // 🔹 AUDIT SUCCESSFUL LOGIN
                 db.query("INSERT INTO audit_log (username, status) VALUES (?, 'SUCCESS')", [username]);
 
-                // 🔹 SAVE SESSION HERE — required step!
+                // Save session
                 req.session.userId = username;
 
-                // Redirect to protected area
-                res.redirect('/users/listusers');
+                // Redirect to protected area (correct URL)
+                res.redirect('/usr/387/users/listusers');
 
             } else {
 
-                // 🔹 AUDIT FAILED LOGIN
                 db.query("INSERT INTO audit_log (username, status) VALUES (?, 'FAIL')", [username]);
 
                 res.render("login.ejs", { message: "Login failed: Incorrect password." });
@@ -126,7 +121,7 @@ router.post('/loggedin', function (req, res, next) {
 });
 
 
-// --- AUDIT LOG PAGE (OPTIONALLY PROTECTED TOO) ---
+// --- AUDIT LOG PAGE (PROTECTED) ---
 router.get('/audit', redirectLogin, function (req, res, next) {
 
     const sqlquery = "SELECT * FROM audit_log ORDER BY timestamp DESC";

@@ -8,7 +8,8 @@ const bcrypt = require("bcrypt");
 // ------------------------------
 const redirectLogin = (req, res, next) => {
     if (!req.session.userId) {
-        return res.redirect('/users/login');
+        // MUST redirect to full Apache path
+        return res.redirect('/usr/387/users/login');
     }
     next();
 };
@@ -22,7 +23,7 @@ router.get('/search', function(req, res, next){
     res.render("search.ejs");
 });
 
-// Public: Search results
+// Public: Search results (very simple)
 router.get('/search-result', function (req, res, next) {
     res.send("You searched for: " + req.query.keyword);
 });
@@ -56,7 +57,7 @@ router.post('/bookadded', redirectLogin, (req, res, next) => {
     });
 });
 
-// Public: search by keyword (exact match)
+// Public: search by keyword (LIKE search)
 router.get('/search_result', function (req, res, next) {
     const keyword = req.query.search_text;
 
@@ -78,8 +79,9 @@ router.get('/search_result', function (req, res, next) {
     });
 });
 
+
 // ------------------------------
-// USER ROUTES
+// USER ROUTES (should not be in books router, but keeping functional)
 // ------------------------------
 
 // Login page

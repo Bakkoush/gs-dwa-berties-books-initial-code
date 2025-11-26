@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Search Bertie’s Books</title>
+
+  <!-- Correct CSS path -->
+  <link rel="stylesheet" type="text/css" href="/usr/387/public/main.css" />
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -14,14 +18,17 @@
   </style>
 </head>
 <body>
+
   <h1>Search Bertie’s Books</h1>
 
-  <form action="/books/search_result" method="GET">
-  <p>What book do you want?</p>
-  <input id="search-box" type="text" name="search_text">
-  <input type="submit" value="Search">
-</form>
+  <!-- Corrected form action -->
+  <form action="/usr/387/books/search_result" method="GET">
+    <p>What book do you want?</p>
+    <input id="search-box" type="text" name="search_text">
+    <input type="submit" value="Search">
+  </form>
 
+  <p><a href="/usr/387/">Return to Home</a></p>
 
 </body>
 </html>

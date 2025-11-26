@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <title>Search Results</title>
+
+  <!-- Correct CSS path -->
+  <link rel="stylesheet" type="text/css" href="/usr/387/public/main.css" />
+
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -24,6 +28,7 @@
   </style>
 </head>
 <body>
+
   <h1>Results for "<%= searchTerm %>"</h1>
 
   <% if (results.length > 0) { %>
@@ -35,6 +40,8 @@
   <% } else { %>
     <p>No results found for "<%= searchTerm %>".</p>
   <% } %>
+
+  <p><a href="/usr/387/">Return to Home</a></p>
 
 </body>
 </html>
