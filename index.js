@@ -18,9 +18,6 @@ app.set('view engine', 'ejs')
 // Set up the body parser 
 app.use(express.urlencoded({ extended: true }))
 
-// 🔹 VERY IMPORTANT ON THE VM: Fix session cookies behind proxy
-app.set('trust proxy', 1);
-
 // Create a session
 app.use(session({
     secret: 'somerandomstuff',
