@@ -26,7 +26,7 @@ router.post('/registered',
             .isEmail().withMessage('Please enter a valid email'),
 
         check('username')
-            .isLength({ min: 5, max: 20 })
+            .isLength({ min: 4, max: 20 })
             .withMessage('Username must be between 5 and 20 characters'),
 
         check('password')
