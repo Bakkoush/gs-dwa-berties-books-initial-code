@@ -4,18 +4,31 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 
 // ------------------------------
+// LOGIN ACCESS CONTROL
+// ------------------------------
+const redirectLogin = (req, res, next) => {
+    if (!req.session.userId) {
+        return res.redirect('/users/login');
+    }
+    next();
+};
+
+// ------------------------------
 // BOOK ROUTES
 // ------------------------------
 
+// Public: Search page
 router.get('/search', function(req, res, next){
     res.render("search.ejs");
 });
 
+// Public: Search results
 router.get('/search-result', function (req, res, next) {
     res.send("You searched for: " + req.query.keyword);
 });
 
-router.get('/list', function(req, res, next) {
+// Protected: List all books
+router.get('/list', redirectLogin, function(req, res, next) {
     let sqlquery = "SELECT * FROM books";
     db.query(sqlquery, (err, result) => {
         if (err) next(err);
@@ -23,13 +36,13 @@ router.get('/list', function(req, res, next) {
     });
 });
 
-// Add book form
-router.get('/addbook', function(req, res, next) {
+// Protected: Add book form
+router.get('/addbook', redirectLogin, function(req, res, next) {
     res.render('addbook', { message: null });
 });
 
-// Handle adding book
-router.post('/bookadded', (req, res, next) => {
+// Protected: Handle adding book
+router.post('/bookadded', redirectLogin, (req, res, next) => {
     const name = req.body.bookname;
     const price = req.body.price;
 
@@ -43,7 +56,7 @@ router.post('/bookadded', (req, res, next) => {
     });
 });
 
-// Search exact match
+// Public: search by keyword
 router.get('/search_result', function (req, res, next) {
     const keyword = req.query.search_text;
 
@@ -62,25 +75,6 @@ router.get('/search_result', function (req, res, next) {
                 results: result
             });
         }
-    });
-});
-
-// ------------------------------
-// USER ROUTES (added as requested)
-// ------------------------------
-
-// Login page
-router.get('/users/login', (req, res) => {
-    res.render('login.ejs', { message: null });
-});
-
-// List all users (no passwords)
-router.get('/users/listusers', (req, res, next) => {
-    const sqlquery = "SELECT username, firstName, lastName, email FROM users";
-
-    db.query(sqlquery, (err, result) => {
-        if (err) next(err);
-        else res.render('listusers.ejs', { users: result });
     });
 });
 

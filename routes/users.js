@@ -4,6 +4,15 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const saltRounds = 10;
 
+// 🔹 Session redirect middleware
+const redirectLogin = (req, res, next) => {
+    if (!req.session.userId) {
+        res.redirect('./login');
+    } else {
+        next();
+    }
+};
+
 // --- REGISTRATION PAGE ---
 router.get('/register', function (req, res, next) {
     res.render('register.ejs');
@@ -24,7 +33,6 @@ router.post('/registered', function (req, res, next) {
             return res.send("Error hashing password.");
         }
 
-        // Save user in database
         let sqlquery = `
             INSERT INTO users (username, firstName, lastName, email, hashedPassword)
             VALUES (?, ?, ?, ?, ?)
@@ -48,8 +56,8 @@ router.post('/registered', function (req, res, next) {
     });
 });
 
-// --- LIST USERS ---
-router.get('/listusers', function (req, res, next) {
+// --- LIST USERS (PROTECTED) ---
+router.get('/listusers', redirectLogin, function (req, res, next) {
 
     const sqlquery = "SELECT username, firstName, lastName, email FROM users";
 
@@ -65,7 +73,7 @@ router.get('/login', function (req, res, next) {
     res.render('login.ejs', { message: null });
 });
 
-// --- HANDLE LOGIN (With Audit Logging) ---
+// --- HANDLE LOGIN ---
 router.post('/loggedin', function (req, res, next) {
 
     const username = req.body.username;
@@ -93,10 +101,10 @@ router.post('/loggedin', function (req, res, next) {
 
                 db.query("INSERT INTO audit_log (username, status) VALUES (?, 'SUCCESS')", [username]);
 
-                res.send(`
-                    <h1>Login Successful</h1>
-                    <p>Welcome back, ${result[0].firstName}!</p>
-                `);
+                // 🔹 SAVE SESSION HERE
+                req.session.userId = username;
+
+                res.redirect('/users/listusers');
 
             } else {
 
@@ -108,8 +116,8 @@ router.post('/loggedin', function (req, res, next) {
     });
 });
 
-// --- AUDIT LOG PAGE ---
-router.get('/audit', function (req, res, next) {
+// --- AUDIT LOG PAGE (PROTECTED) ---
+router.get('/audit', redirectLogin, function (req, res, next) {
 
     const sqlquery = "SELECT * FROM audit_log ORDER BY timestamp DESC";
 
