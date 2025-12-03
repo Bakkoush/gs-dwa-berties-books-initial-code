@@ -53,6 +53,9 @@ Validation was applied here because the login form must contain both fields, and
 
 I did not apply validation on internal routes such as /listusers or /audit because these do not accept user-submitted input and therefore do not require validation. Validation is only necessary on routes that handle external input from the user.
 
+
+
+
 I created an API in api.js to allow external applications to retrieve book data in JSON format. The API was registered in index.js using:
 
 app.use('/api', apiRoutes);
