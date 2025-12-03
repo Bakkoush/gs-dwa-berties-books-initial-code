@@ -52,3 +52,30 @@ password – required
 Validation was applied here because the login form must contain both fields, and missing values would otherwise cause unnecessary database lookups or misleading error messages.
 
 I did not apply validation on internal routes such as /listusers or /audit because these do not accept user-submitted input and therefore do not require validation. Validation is only necessary on routes that handle external input from the user.
+
+I created an API in api.js to allow external applications to retrieve book data in JSON format. The API was registered in index.js using:
+
+app.use('/api', apiRoutes);
+
+/api/books
+
+This route returns all books from the database in JSON form using:
+
+res.json(result);
+
+
+I added optional query parameters to make the API more useful:
+
+search – filters books by keyword (e.g., /api/books?search=world)
+
+minprice / maxprice – filters books by price range (e.g., /api/books?minprice=5&maxprice=10)
+
+sort – sorts results by name or price (e.g., /api/books?sort=price)
+
+These features were added to improve flexibility for developers who may want to integrate book data into their own applications.
+
+/api/friendsbooks
+
+I also added a route that calls a friend’s API and returns their book list in JSON format. This demonstrates how external APIs can be consumed inside our application.
+
+The API returns machine-readable data and does not render templates because it is intended for programmatic access rather than for human viewing.
